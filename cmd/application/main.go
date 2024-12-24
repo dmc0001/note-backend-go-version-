@@ -6,6 +6,8 @@ import (
 	"simple-backend/api"
 )
 
+const port = ":8081"
+
 func main() {
 	s := "gopher"
 	fmt.Printf("Hello and welcome, %s!\n", s)
@@ -25,8 +27,8 @@ func main() {
 	mux.HandleFunc("/api/v1/notes/delete", notesAPI.DeleteNote)
 	mux.HandleFunc("/api/v1/notes/find", notesAPI.GetNote)
 
-	fmt.Println("Server running on port 8080...")
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	fmt.Println("Server running on port 8081...")
+	if err := http.ListenAndServe(port, mux); err != nil {
 		fmt.Println("Error starting server:", err)
 	}
 }

@@ -3,17 +3,17 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"simple-backend/internal/config"
+	"simple-backend/internal/config/v1"
 	"strconv"
 )
 
 type Notes struct {
-	notes config.Notes
+	notes v1.Notes
 }
 
 func NewNotes() *Notes {
 	return &Notes{
-		notes: make(config.Notes, 0),
+		notes: make(v1.Notes, 0),
 	}
 }
 
@@ -24,7 +24,7 @@ func (n *Notes) AddNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req config.AddNoteRequest
+	var req v1.AddNoteRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -34,7 +34,7 @@ func (n *Notes) AddNote(w http.ResponseWriter, r *http.Request) {
 	response := n.notes.AddNote(&req)
 	switch result := response.Result.(type) {
 
-	case config.Success:
+	case v1.Success:
 		w.WriteHeader(http.StatusCreated)
 		err := json.NewEncoder(w).Encode(result.Note)
 
@@ -42,7 +42,7 @@ func (n *Notes) AddNote(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-	case config.Failure:
+	case v1.Failure:
 		http.Error(w, result.Message, http.StatusBadRequest)
 	}
 
@@ -54,7 +54,7 @@ func (n *Notes) UpdateNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req config.UpdateNoteRequest
+	var req v1.UpdateNoteRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -62,14 +62,14 @@ func (n *Notes) UpdateNote(w http.ResponseWriter, r *http.Request) {
 	}
 	response := n.notes.EditNote(&req)
 	switch result := response.Result.(type) {
-	case config.Success:
+	case v1.Success:
 		w.WriteHeader(http.StatusOK)
 		err := json.NewEncoder(w).Encode(result.Note)
 		if err != nil {
 			return
 		}
 
-	case config.Failure:
+	case v1.Failure:
 		http.Error(w, result.Message, http.StatusNotFound)
 	}
 }
@@ -78,7 +78,7 @@ func (n *Notes) DeleteNote(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	var req config.DeleteNoteRequest
+	var req v1.DeleteNoteRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
@@ -86,14 +86,14 @@ func (n *Notes) DeleteNote(w http.ResponseWriter, r *http.Request) {
 	response := n.notes.RemoveNote(&req)
 	switch result := response.Result.(type) {
 
-	case config.Success:
+	case v1.Success:
 		w.WriteHeader(http.StatusOK)
 		err := json.NewEncoder(w).Encode(result.Note)
 		if err != nil {
 			return
 		}
 
-	case config.Failure:
+	case v1.Failure:
 		http.Error(w, result.Message, http.StatusNotFound)
 
 	}
@@ -104,6 +104,9 @@ func (n *Notes) GetNotes(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
+	}
+	if len(n.notes) == 0 {
+		w.WriteHeader(http.StatusNoContent)
 	}
 
 	err := json.NewEncoder(w).Encode(n.notes)
@@ -133,7 +136,6 @@ func (n *Notes) GetNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Search for the note by ID
 	for _, note := range n.notes {
 		if note.Id == id {
 			// If found, respond with the note

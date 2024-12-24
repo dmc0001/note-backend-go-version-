@@ -1,4 +1,4 @@
-package config
+package v1
 
 type AddNoteRequest struct {
 	Title       string `json:"title"`

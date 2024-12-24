@@ -1,4 +1,4 @@
-package config
+package v1
 
 import "sort"
 
@@ -19,15 +19,16 @@ func (notes *Notes) RemoveNote(req *DeleteNoteRequest) DeleteNoteResponse {
 			},
 		}
 	}
-	
+
 	index := sort.Search(len(*notes), func(i int) bool {
 		return (*notes)[i].Id >= req.Id
 	})
 
 	if index < len(*notes) && (*notes)[index].Id == req.Id {
+		removedNote := (*notes)[index]
 		*notes = append((*notes)[:index], (*notes)[index+1:]...)
 		return DeleteNoteResponse{
-			Result: Success{(*notes)[index]},
+			Result: Success{removedNote},
 		}
 	}
 

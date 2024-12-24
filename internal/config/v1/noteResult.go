@@ -1,4 +1,4 @@
-package config
+package v1
 
 type Success struct {
 	Note Note `json:"note"`

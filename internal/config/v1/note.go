@@ -1,4 +1,4 @@
-package config
+package v1
 
 type Note struct {
 	Id          int    `json:"id"`

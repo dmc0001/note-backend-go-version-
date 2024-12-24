@@ -6,13 +6,13 @@ This project is a simple notes management server built using Go's standard libra
 
 Setting this up locally is trivial
 
-* `$ git clone https://github.com/dmc0001/note-backend`
+* `$ git clone https://github.com/dmc0001/note-backend-go-version-`
 * `cd note-backend`
 * `go run main.go`
 
 ## How to use it
 
-This backend supports five actions: "create-note", "delete-node", "update-note", "fetch-note", and "list-notes"
+This backend supports five actions: "create", "delete", "update-", "find", and "list"
 
 ### api/v1/notes/list (GET)
 
@@ -75,10 +75,8 @@ curl -X POST http://0.0.0.0:8080/api/v1/notes/create -d { "note":{ "id": 2, "tit
 ### Request body:
 ```
 {
-  "note": { "id": 2,
     "title": "note 2",
     "description": "description note 2"
-  }
 }
 ```
 ### Expected Status
@@ -97,10 +95,9 @@ curl -X PUT http://0.0.0.0:8080/api/v1/notes/update -d {  "note":{"id":2 title":
 ### Request body:
 ```
 {
-  "note": { "id": 2,
-    "title": "note 2",
-    "description": "description note 2"
-  }
+  "id": 2,
+  "title": "note 2",
+  "description": "description note 2"
 }
 ```
 ### Expected Status
@@ -119,10 +116,7 @@ curl -X DELETE http://0.0.0.0:8080/api/v1/notes/delete -d {  "note":{"id":2 titl
 ### Request body:
 ```
 {
-  "note": { "id": 2,
-    "title": "note 2",
-    "description": "description note 2"
-  }
+  "id": 2,
 }
 ```
 ### Expected Status

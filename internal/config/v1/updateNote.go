@@ -1,11 +1,11 @@
-package config
+package v1
 
 import "sort"
 
 type UpdateNoteRequest struct {
 	Id          int    `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 type UpdateNoteResponse struct {
@@ -18,11 +18,16 @@ func (notes *Notes) EditNote(req *UpdateNoteRequest) UpdateNoteResponse {
 		return (*notes)[i].Id >= req.Id
 	})
 
-	//index := notes.FindNote(req.Id)
-
 	if index < len(*notes) && (*notes)[index].Id == req.Id {
-		(*notes)[index].Title = req.Title
-		(*notes)[index].Description = req.Description
+
+		if req.Title != "" {
+			(*notes)[index].Title = req.Title
+		}
+
+		if req.Description != "" {
+			(*notes)[index].Description = req.Description
+		}
+
 		return UpdateNoteResponse{
 			Result: Success{(*notes)[index]},
 		}
@@ -34,12 +39,3 @@ func (notes *Notes) EditNote(req *UpdateNoteRequest) UpdateNoteResponse {
 		},
 	}
 }
-
-//func (notes *Notes) FindNote(id int) int {
-//	for i, note := range *notes {
-//		if note.Id == id {
-//			return i
-//		}
-//	}
-//	return -1
-//}
